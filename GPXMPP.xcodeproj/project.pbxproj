@@ -1,0 +1,637 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5C61E893160516C8008AE2CD /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6D7D3315FBE37B0017A947 /* libxml2.2.dylib */; };
+		5C6D7C9115F6DFB90017A947 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6D7C9015F6DFB90017A947 /* Foundation.framework */; };
+		5C6D7C9615F6DFB90017A947 /* GPXMPP.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5C6D7C9515F6DFB90017A947 /* GPXMPP.h */; };
+		5C6D7CA015F6DFB90017A947 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6D7C9F15F6DFB90017A947 /* SenTestingKit.framework */; };
+		5C6D7CA315F6DFB90017A947 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6D7C9015F6DFB90017A947 /* Foundation.framework */; };
+		5C6D7CA615F6DFB90017A947 /* libGPXMPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6D7C8D15F6DFB90017A947 /* libGPXMPP.a */; };
+		5C6D7CAC15F6DFB90017A947 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C6D7CAA15F6DFB90017A947 /* InfoPlist.strings */; };
+		5C6D7CAF15F6DFB90017A947 /* GPXMPPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6D7CAE15F6DFB90017A947 /* GPXMPPTests.m */; };
+		5C6D7D2E15FBE1950017A947 /* GPXMPPStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6D7D2D15FBE1950017A947 /* GPXMPPStream.m */; };
+		5CAC45DD1612A9B300F3AA85 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CAC45DC1612A9B300F3AA85 /* Security.framework */; };
+		5CF87B1C1633306500A92D3A /* GPSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CF87AC81633306500A92D3A /* GPSocket.m */; };
+		5CF87B1D1633306500A92D3A /* KQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CF87ACA1633306500A92D3A /* KQueue.m */; };
+		5CF87B1E1633306500A92D3A /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CF87AEF1633306500A92D3A /* libcrypto.a */; };
+		5CF87B1F1633306600A92D3A /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CF87AF01633306500A92D3A /* libssl.a */; };
+		5CF87B201633306600A92D3A /* XMLKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CF87B1B1633306500A92D3A /* XMLKit.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5C6D7CA415F6DFB90017A947 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5C6D7C8415F6DFB90017A947 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C6D7C8C15F6DFB90017A947;
+			remoteInfo = GPXMPP;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5C6D7C8B15F6DFB90017A947 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/${PRODUCT_NAME}";
+			dstSubfolderSpec = 16;
+			files = (
+				5C6D7C9615F6DFB90017A947 /* GPXMPP.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		5C6D7C8D15F6DFB90017A947 /* libGPXMPP.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGPXMPP.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C6D7C9015F6DFB90017A947 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		5C6D7C9415F6DFB90017A947 /* GPXMPP-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GPXMPP-Prefix.pch"; sourceTree = "<group>"; };
+		5C6D7C9515F6DFB90017A947 /* GPXMPP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPXMPP.h; sourceTree = "<group>"; };
+		5C6D7C9E15F6DFB90017A947 /* GPXMPPTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GPXMPPTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C6D7C9F15F6DFB90017A947 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		5C6D7CA915F6DFB90017A947 /* GPXMPPTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GPXMPPTests-Info.plist"; sourceTree = "<group>"; };
+		5C6D7CAB15F6DFB90017A947 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5C6D7CAD15F6DFB90017A947 /* GPXMPPTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPXMPPTests.h; sourceTree = "<group>"; };
+		5C6D7CAE15F6DFB90017A947 /* GPXMPPTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GPXMPPTests.m; sourceTree = "<group>"; };
+		5C6D7D2C15FBE1950017A947 /* GPXMPPStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPXMPPStream.h; sourceTree = "<group>"; };
+		5C6D7D2D15FBE1950017A947 /* GPXMPPStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPXMPPStream.m; sourceTree = "<group>"; };
+		5C6D7D3315FBE37B0017A947 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
+		5CAC45DC1612A9B300F3AA85 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		5CF87AC71633306500A92D3A /* GPSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPSocket.h; sourceTree = "<group>"; };
+		5CF87AC81633306500A92D3A /* GPSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPSocket.m; sourceTree = "<group>"; };
+		5CF87AC91633306500A92D3A /* KQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KQueue.h; sourceTree = "<group>"; };
+		5CF87ACA1633306500A92D3A /* KQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KQueue.m; sourceTree = "<group>"; };
+		5CF87ACC1633306500A92D3A /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes.h; sourceTree = "<group>"; };
+		5CF87ACD1633306500A92D3A /* asn1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asn1.h; sourceTree = "<group>"; };
+		5CF87ACE1633306500A92D3A /* asn1_mac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asn1_mac.h; sourceTree = "<group>"; };
+		5CF87ACF1633306500A92D3A /* asn1t.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asn1t.h; sourceTree = "<group>"; };
+		5CF87AD01633306500A92D3A /* bio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bio.h; sourceTree = "<group>"; };
+		5CF87AD11633306500A92D3A /* blowfish.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blowfish.h; sourceTree = "<group>"; };
+		5CF87AD21633306500A92D3A /* bn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bn.h; sourceTree = "<group>"; };
+		5CF87AD31633306500A92D3A /* buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buffer.h; sourceTree = "<group>"; };
+		5CF87AD41633306500A92D3A /* camellia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camellia.h; sourceTree = "<group>"; };
+		5CF87AD51633306500A92D3A /* cast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cast.h; sourceTree = "<group>"; };
+		5CF87AD61633306500A92D3A /* cmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cmac.h; sourceTree = "<group>"; };
+		5CF87AD71633306500A92D3A /* cms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cms.h; sourceTree = "<group>"; };
+		5CF87AD81633306500A92D3A /* comp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comp.h; sourceTree = "<group>"; };
+		5CF87AD91633306500A92D3A /* conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf.h; sourceTree = "<group>"; };
+		5CF87ADA1633306500A92D3A /* conf_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_api.h; sourceTree = "<group>"; };
+		5CF87ADB1633306500A92D3A /* crypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto.h; sourceTree = "<group>"; };
+		5CF87ADC1633306500A92D3A /* des.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = des.h; sourceTree = "<group>"; };
+		5CF87ADD1633306500A92D3A /* des_old.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = des_old.h; sourceTree = "<group>"; };
+		5CF87ADE1633306500A92D3A /* dh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dh.h; sourceTree = "<group>"; };
+		5CF87ADF1633306500A92D3A /* dsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsa.h; sourceTree = "<group>"; };
+		5CF87AE01633306500A92D3A /* dso.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dso.h; sourceTree = "<group>"; };
+		5CF87AE11633306500A92D3A /* dtls1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dtls1.h; sourceTree = "<group>"; };
+		5CF87AE21633306500A92D3A /* e_os2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = e_os2.h; sourceTree = "<group>"; };
+		5CF87AE31633306500A92D3A /* ebcdic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ebcdic.h; sourceTree = "<group>"; };
+		5CF87AE41633306500A92D3A /* ec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ec.h; sourceTree = "<group>"; };
+		5CF87AE51633306500A92D3A /* ecdh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ecdh.h; sourceTree = "<group>"; };
+		5CF87AE61633306500A92D3A /* ecdsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ecdsa.h; sourceTree = "<group>"; };
+		5CF87AE71633306500A92D3A /* engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = engine.h; sourceTree = "<group>"; };
+		5CF87AE81633306500A92D3A /* err.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = err.h; sourceTree = "<group>"; };
+		5CF87AE91633306500A92D3A /* evp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = evp.h; sourceTree = "<group>"; };
+		5CF87AEA1633306500A92D3A /* hmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hmac.h; sourceTree = "<group>"; };
+		5CF87AEB1633306500A92D3A /* idea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = idea.h; sourceTree = "<group>"; };
+		5CF87AEC1633306500A92D3A /* krb5_asn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = krb5_asn.h; sourceTree = "<group>"; };
+		5CF87AED1633306500A92D3A /* kssl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kssl.h; sourceTree = "<group>"; };
+		5CF87AEE1633306500A92D3A /* lhash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lhash.h; sourceTree = "<group>"; };
+		5CF87AEF1633306500A92D3A /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcrypto.a; sourceTree = "<group>"; };
+		5CF87AF01633306500A92D3A /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libssl.a; sourceTree = "<group>"; };
+		5CF87AF11633306500A92D3A /* md4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md4.h; sourceTree = "<group>"; };
+		5CF87AF21633306500A92D3A /* md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
+		5CF87AF31633306500A92D3A /* mdc2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mdc2.h; sourceTree = "<group>"; };
+		5CF87AF41633306500A92D3A /* modes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = modes.h; sourceTree = "<group>"; };
+		5CF87AF51633306500A92D3A /* obj_mac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = obj_mac.h; sourceTree = "<group>"; };
+		5CF87AF61633306500A92D3A /* objects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objects.h; sourceTree = "<group>"; };
+		5CF87AF71633306500A92D3A /* ocsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ocsp.h; sourceTree = "<group>"; };
+		5CF87AF81633306500A92D3A /* opensslconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opensslconf.h; sourceTree = "<group>"; };
+		5CF87AF91633306500A92D3A /* opensslv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opensslv.h; sourceTree = "<group>"; };
+		5CF87AFA1633306500A92D3A /* ossl_typ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ossl_typ.h; sourceTree = "<group>"; };
+		5CF87AFB1633306500A92D3A /* pem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pem.h; sourceTree = "<group>"; };
+		5CF87AFC1633306500A92D3A /* pem2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pem2.h; sourceTree = "<group>"; };
+		5CF87AFD1633306500A92D3A /* pkcs12.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pkcs12.h; sourceTree = "<group>"; };
+		5CF87AFE1633306500A92D3A /* pkcs7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pkcs7.h; sourceTree = "<group>"; };
+		5CF87AFF1633306500A92D3A /* pqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pqueue.h; sourceTree = "<group>"; };
+		5CF87B001633306500A92D3A /* rand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rand.h; sourceTree = "<group>"; };
+		5CF87B011633306500A92D3A /* rc2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rc2.h; sourceTree = "<group>"; };
+		5CF87B021633306500A92D3A /* rc4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rc4.h; sourceTree = "<group>"; };
+		5CF87B031633306500A92D3A /* ripemd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ripemd.h; sourceTree = "<group>"; };
+		5CF87B041633306500A92D3A /* rsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rsa.h; sourceTree = "<group>"; };
+		5CF87B051633306500A92D3A /* safestack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = safestack.h; sourceTree = "<group>"; };
+		5CF87B061633306500A92D3A /* seed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = seed.h; sourceTree = "<group>"; };
+		5CF87B071633306500A92D3A /* sha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha.h; sourceTree = "<group>"; };
+		5CF87B081633306500A92D3A /* srp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = srp.h; sourceTree = "<group>"; };
+		5CF87B091633306500A92D3A /* srtp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = srtp.h; sourceTree = "<group>"; };
+		5CF87B0A1633306500A92D3A /* ssl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssl.h; sourceTree = "<group>"; };
+		5CF87B0B1633306500A92D3A /* ssl2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssl2.h; sourceTree = "<group>"; };
+		5CF87B0C1633306500A92D3A /* ssl23.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssl23.h; sourceTree = "<group>"; };
+		5CF87B0D1633306500A92D3A /* ssl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssl3.h; sourceTree = "<group>"; };
+		5CF87B0E1633306500A92D3A /* stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stack.h; sourceTree = "<group>"; };
+		5CF87B0F1633306500A92D3A /* symhacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = symhacks.h; sourceTree = "<group>"; };
+		5CF87B101633306500A92D3A /* tls1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tls1.h; sourceTree = "<group>"; };
+		5CF87B111633306500A92D3A /* ts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ts.h; sourceTree = "<group>"; };
+		5CF87B121633306500A92D3A /* txt_db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = txt_db.h; sourceTree = "<group>"; };
+		5CF87B131633306500A92D3A /* ui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ui.h; sourceTree = "<group>"; };
+		5CF87B141633306500A92D3A /* ui_compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ui_compat.h; sourceTree = "<group>"; };
+		5CF87B151633306500A92D3A /* whrlpool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = whrlpool.h; sourceTree = "<group>"; };
+		5CF87B161633306500A92D3A /* x509.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x509.h; sourceTree = "<group>"; };
+		5CF87B171633306500A92D3A /* x509_vfy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x509_vfy.h; sourceTree = "<group>"; };
+		5CF87B181633306500A92D3A /* x509v3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x509v3.h; sourceTree = "<group>"; };
+		5CF87B1A1633306500A92D3A /* XMLKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLKit.h; sourceTree = "<group>"; };
+		5CF87B1B1633306500A92D3A /* XMLKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLKit.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5C6D7C8A15F6DFB90017A947 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5CAC45DD1612A9B300F3AA85 /* Security.framework in Frameworks */,
+				5C61E893160516C8008AE2CD /* libxml2.2.dylib in Frameworks */,
+				5C6D7C9115F6DFB90017A947 /* Foundation.framework in Frameworks */,
+				5CF87B1E1633306500A92D3A /* libcrypto.a in Frameworks */,
+				5CF87B1F1633306600A92D3A /* libssl.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C6D7C9A15F6DFB90017A947 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C6D7CA015F6DFB90017A947 /* SenTestingKit.framework in Frameworks */,
+				5C6D7CA315F6DFB90017A947 /* Foundation.framework in Frameworks */,
+				5C6D7CA615F6DFB90017A947 /* libGPXMPP.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5C6D7C8215F6DFB90017A947 = {
+			isa = PBXGroup;
+			children = (
+				5CAC45DC1612A9B300F3AA85 /* Security.framework */,
+				5C6D7C9215F6DFB90017A947 /* GPXMPP */,
+				5C6D7CA715F6DFB90017A947 /* GPXMPPTests */,
+				5C6D7C8F15F6DFB90017A947 /* Frameworks */,
+				5C6D7C8E15F6DFB90017A947 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5C6D7C8E15F6DFB90017A947 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5C6D7C8D15F6DFB90017A947 /* libGPXMPP.a */,
+				5C6D7C9E15F6DFB90017A947 /* GPXMPPTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5C6D7C8F15F6DFB90017A947 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5C6D7D3315FBE37B0017A947 /* libxml2.2.dylib */,
+				5C6D7C9015F6DFB90017A947 /* Foundation.framework */,
+				5C6D7C9F15F6DFB90017A947 /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5C6D7C9215F6DFB90017A947 /* GPXMPP */ = {
+			isa = PBXGroup;
+			children = (
+				5CF87AC51633306500A92D3A /* GPSocket */,
+				5CF87B191633306500A92D3A /* XMLKit */,
+				5C6D7C9515F6DFB90017A947 /* GPXMPP.h */,
+				5C6D7D2C15FBE1950017A947 /* GPXMPPStream.h */,
+				5C6D7D2D15FBE1950017A947 /* GPXMPPStream.m */,
+				5C6D7C9315F6DFB90017A947 /* Supporting Files */,
+			);
+			path = GPXMPP;
+			sourceTree = "<group>";
+		};
+		5C6D7C9315F6DFB90017A947 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5C6D7C9415F6DFB90017A947 /* GPXMPP-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5C6D7CA715F6DFB90017A947 /* GPXMPPTests */ = {
+			isa = PBXGroup;
+			children = (
+				5C6D7CAD15F6DFB90017A947 /* GPXMPPTests.h */,
+				5C6D7CAE15F6DFB90017A947 /* GPXMPPTests.m */,
+				5C6D7CA815F6DFB90017A947 /* Supporting Files */,
+			);
+			path = GPXMPPTests;
+			sourceTree = "<group>";
+		};
+		5C6D7CA815F6DFB90017A947 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5C6D7CA915F6DFB90017A947 /* GPXMPPTests-Info.plist */,
+				5C6D7CAA15F6DFB90017A947 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5CF87AC51633306500A92D3A /* GPSocket */ = {
+			isa = PBXGroup;
+			children = (
+				5CF87AC71633306500A92D3A /* GPSocket.h */,
+				5CF87AC81633306500A92D3A /* GPSocket.m */,
+				5CF87AC91633306500A92D3A /* KQueue.h */,
+				5CF87ACA1633306500A92D3A /* KQueue.m */,
+				5CF87ACB1633306500A92D3A /* openssl */,
+			);
+			path = GPSocket;
+			sourceTree = SOURCE_ROOT;
+		};
+		5CF87ACB1633306500A92D3A /* openssl */ = {
+			isa = PBXGroup;
+			children = (
+				5CF87ACC1633306500A92D3A /* aes.h */,
+				5CF87ACD1633306500A92D3A /* asn1.h */,
+				5CF87ACE1633306500A92D3A /* asn1_mac.h */,
+				5CF87ACF1633306500A92D3A /* asn1t.h */,
+				5CF87AD01633306500A92D3A /* bio.h */,
+				5CF87AD11633306500A92D3A /* blowfish.h */,
+				5CF87AD21633306500A92D3A /* bn.h */,
+				5CF87AD31633306500A92D3A /* buffer.h */,
+				5CF87AD41633306500A92D3A /* camellia.h */,
+				5CF87AD51633306500A92D3A /* cast.h */,
+				5CF87AD61633306500A92D3A /* cmac.h */,
+				5CF87AD71633306500A92D3A /* cms.h */,
+				5CF87AD81633306500A92D3A /* comp.h */,
+				5CF87AD91633306500A92D3A /* conf.h */,
+				5CF87ADA1633306500A92D3A /* conf_api.h */,
+				5CF87ADB1633306500A92D3A /* crypto.h */,
+				5CF87ADC1633306500A92D3A /* des.h */,
+				5CF87ADD1633306500A92D3A /* des_old.h */,
+				5CF87ADE1633306500A92D3A /* dh.h */,
+				5CF87ADF1633306500A92D3A /* dsa.h */,
+				5CF87AE01633306500A92D3A /* dso.h */,
+				5CF87AE11633306500A92D3A /* dtls1.h */,
+				5CF87AE21633306500A92D3A /* e_os2.h */,
+				5CF87AE31633306500A92D3A /* ebcdic.h */,
+				5CF87AE41633306500A92D3A /* ec.h */,
+				5CF87AE51633306500A92D3A /* ecdh.h */,
+				5CF87AE61633306500A92D3A /* ecdsa.h */,
+				5CF87AE71633306500A92D3A /* engine.h */,
+				5CF87AE81633306500A92D3A /* err.h */,
+				5CF87AE91633306500A92D3A /* evp.h */,
+				5CF87AEA1633306500A92D3A /* hmac.h */,
+				5CF87AEB1633306500A92D3A /* idea.h */,
+				5CF87AEC1633306500A92D3A /* krb5_asn.h */,
+				5CF87AED1633306500A92D3A /* kssl.h */,
+				5CF87AEE1633306500A92D3A /* lhash.h */,
+				5CF87AEF1633306500A92D3A /* libcrypto.a */,
+				5CF87AF01633306500A92D3A /* libssl.a */,
+				5CF87AF11633306500A92D3A /* md4.h */,
+				5CF87AF21633306500A92D3A /* md5.h */,
+				5CF87AF31633306500A92D3A /* mdc2.h */,
+				5CF87AF41633306500A92D3A /* modes.h */,
+				5CF87AF51633306500A92D3A /* obj_mac.h */,
+				5CF87AF61633306500A92D3A /* objects.h */,
+				5CF87AF71633306500A92D3A /* ocsp.h */,
+				5CF87AF81633306500A92D3A /* opensslconf.h */,
+				5CF87AF91633306500A92D3A /* opensslv.h */,
+				5CF87AFA1633306500A92D3A /* ossl_typ.h */,
+				5CF87AFB1633306500A92D3A /* pem.h */,
+				5CF87AFC1633306500A92D3A /* pem2.h */,
+				5CF87AFD1633306500A92D3A /* pkcs12.h */,
+				5CF87AFE1633306500A92D3A /* pkcs7.h */,
+				5CF87AFF1633306500A92D3A /* pqueue.h */,
+				5CF87B001633306500A92D3A /* rand.h */,
+				5CF87B011633306500A92D3A /* rc2.h */,
+				5CF87B021633306500A92D3A /* rc4.h */,
+				5CF87B031633306500A92D3A /* ripemd.h */,
+				5CF87B041633306500A92D3A /* rsa.h */,
+				5CF87B051633306500A92D3A /* safestack.h */,
+				5CF87B061633306500A92D3A /* seed.h */,
+				5CF87B071633306500A92D3A /* sha.h */,
+				5CF87B081633306500A92D3A /* srp.h */,
+				5CF87B091633306500A92D3A /* srtp.h */,
+				5CF87B0A1633306500A92D3A /* ssl.h */,
+				5CF87B0B1633306500A92D3A /* ssl2.h */,
+				5CF87B0C1633306500A92D3A /* ssl23.h */,
+				5CF87B0D1633306500A92D3A /* ssl3.h */,
+				5CF87B0E1633306500A92D3A /* stack.h */,
+				5CF87B0F1633306500A92D3A /* symhacks.h */,
+				5CF87B101633306500A92D3A /* tls1.h */,
+				5CF87B111633306500A92D3A /* ts.h */,
+				5CF87B121633306500A92D3A /* txt_db.h */,
+				5CF87B131633306500A92D3A /* ui.h */,
+				5CF87B141633306500A92D3A /* ui_compat.h */,
+				5CF87B151633306500A92D3A /* whrlpool.h */,
+				5CF87B161633306500A92D3A /* x509.h */,
+				5CF87B171633306500A92D3A /* x509_vfy.h */,
+				5CF87B181633306500A92D3A /* x509v3.h */,
+			);
+			path = openssl;
+			sourceTree = "<group>";
+		};
+		5CF87B191633306500A92D3A /* XMLKit */ = {
+			isa = PBXGroup;
+			children = (
+				5CF87B1A1633306500A92D3A /* XMLKit.h */,
+				5CF87B1B1633306500A92D3A /* XMLKit.m */,
+			);
+			path = XMLKit;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5C6D7C8C15F6DFB90017A947 /* GPXMPP */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5C6D7CB215F6DFB90017A947 /* Build configuration list for PBXNativeTarget "GPXMPP" */;
+			buildPhases = (
+				5C6D7C8915F6DFB90017A947 /* Sources */,
+				5C6D7C8A15F6DFB90017A947 /* Frameworks */,
+				5C6D7C8B15F6DFB90017A947 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GPXMPP;
+			productName = GPXMPP;
+			productReference = 5C6D7C8D15F6DFB90017A947 /* libGPXMPP.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		5C6D7C9D15F6DFB90017A947 /* GPXMPPTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5C6D7CB515F6DFB90017A947 /* Build configuration list for PBXNativeTarget "GPXMPPTests" */;
+			buildPhases = (
+				5C6D7C9915F6DFB90017A947 /* Sources */,
+				5C6D7C9A15F6DFB90017A947 /* Frameworks */,
+				5C6D7C9B15F6DFB90017A947 /* Resources */,
+				5C6D7C9C15F6DFB90017A947 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5C6D7CA515F6DFB90017A947 /* PBXTargetDependency */,
+			);
+			name = GPXMPPTests;
+			productName = GPXMPPTests;
+			productReference = 5C6D7C9E15F6DFB90017A947 /* GPXMPPTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5C6D7C8415F6DFB90017A947 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0440;
+				ORGANIZATIONNAME = "Basement Krew";
+			};
+			buildConfigurationList = 5C6D7C8715F6DFB90017A947 /* Build configuration list for PBXProject "GPXMPP" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 5C6D7C8215F6DFB90017A947;
+			productRefGroup = 5C6D7C8E15F6DFB90017A947 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5C6D7C8C15F6DFB90017A947 /* GPXMPP */,
+				5C6D7C9D15F6DFB90017A947 /* GPXMPPTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5C6D7C9B15F6DFB90017A947 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C6D7CAC15F6DFB90017A947 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5C6D7C9C15F6DFB90017A947 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5C6D7C8915F6DFB90017A947 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C6D7D2E15FBE1950017A947 /* GPXMPPStream.m in Sources */,
+				5CF87B1C1633306500A92D3A /* GPSocket.m in Sources */,
+				5CF87B1D1633306500A92D3A /* KQueue.m in Sources */,
+				5CF87B201633306600A92D3A /* XMLKit.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C6D7C9915F6DFB90017A947 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C6D7CAF15F6DFB90017A947 /* GPXMPPTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5C6D7CA515F6DFB90017A947 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C6D7C8C15F6DFB90017A947 /* GPXMPP */;
+			targetProxy = 5C6D7CA415F6DFB90017A947 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		5C6D7CAA15F6DFB90017A947 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5C6D7CAB15F6DFB90017A947 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		5C6D7CB015F6DFB90017A947 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		5C6D7CB115F6DFB90017A947 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5C6D7CB315F6DFB90017A947 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/GPXMPP.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GPXMPP/GPXMPP-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"${SDK_DIR}/usr/include/libxml2/libxml",
+					/usr/include/libxml2,
+					"../GPSocket/**",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/GPXMPP/kqueue/openssl\"",
+					"\"$(SRCROOT)/GPSocket/openssl\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		5C6D7CB415F6DFB90017A947 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/GPXMPP.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GPXMPP/GPXMPP-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"${SDK_DIR}/usr/include/libxml2/libxml",
+					/usr/include/libxml2,
+					"../GPSocket/**",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/GPXMPP/kqueue/openssl\"",
+					"\"$(SRCROOT)/GPSocket/openssl\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		5C6D7CB615F6DFB90017A947 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GPXMPP/GPXMPP-Prefix.pch";
+				INFOPLIST_FILE = "GPXMPPTests/GPXMPPTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		5C6D7CB715F6DFB90017A947 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GPXMPP/GPXMPP-Prefix.pch";
+				INFOPLIST_FILE = "GPXMPPTests/GPXMPPTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5C6D7C8715F6DFB90017A947 /* Build configuration list for PBXProject "GPXMPP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C6D7CB015F6DFB90017A947 /* Debug */,
+				5C6D7CB115F6DFB90017A947 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5C6D7CB215F6DFB90017A947 /* Build configuration list for PBXNativeTarget "GPXMPP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C6D7CB315F6DFB90017A947 /* Debug */,
+				5C6D7CB415F6DFB90017A947 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5C6D7CB515F6DFB90017A947 /* Build configuration list for PBXNativeTarget "GPXMPPTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C6D7CB615F6DFB90017A947 /* Debug */,
+				5C6D7CB715F6DFB90017A947 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5C6D7C8415F6DFB90017A947 /* Project object */;
+}

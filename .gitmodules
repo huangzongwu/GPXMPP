@@ -1,0 +1,6 @@
+[submodule "XMLKit"]
+	path = XMLKit
+	url = https://github.com/daltoniam/XMLKit.git
+[submodule "GPSocket"]
+	path = GPSocket
+	url = https://github.com/daltoniam/GPSocket.git
