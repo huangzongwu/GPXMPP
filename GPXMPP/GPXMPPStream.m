@@ -125,6 +125,13 @@ static GPXMPPStream* globalStream;
             [self fetchRoster];
             [self readLoop];
         }
+        
+        //if we get here, something has gone wrong
+        [socketConnection close];
+        [socketConnection release];
+        socketConnection = nil;
+        if([self.delegate respondsToSelector:@selector(streamDidFailLogin)])
+            [self.delegate streamDidFailLogin];
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,7 +170,7 @@ static GPXMPPStream* globalStream;
         [self writeElement:element];
         responseElement = [self readElement];
     }
-    //NSLog(@"auth response:%@",response);
+    //NSLog(@"auth response:%@",[responseElement convertToString]);
     if([responseElement.name isEqualToString:@"success"])
         return YES;
     return NO;

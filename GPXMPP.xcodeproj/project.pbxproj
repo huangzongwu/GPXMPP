@@ -536,16 +536,16 @@
 				HEADER_SEARCH_PATHS = (
 					"${SDK_DIR}/usr/include/libxml2/libxml",
 					/usr/include/libxml2,
-					"../GPSocket/**",
+					"../GPSocket/openssl/**",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/GPXMPP/kqueue/openssl\"",
 					"\"$(SRCROOT)/GPSocket/openssl\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -558,16 +558,16 @@
 				HEADER_SEARCH_PATHS = (
 					"${SDK_DIR}/usr/include/libxml2/libxml",
 					/usr/include/libxml2,
-					"../GPSocket/**",
+					"../GPSocket/openssl/**",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/GPXMPP/kqueue/openssl\"",
 					"\"$(SRCROOT)/GPSocket/openssl\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};

@@ -47,6 +47,9 @@ typedef enum {
 //the stream is setup and ready to be written/listened from.
 -(void)streamDidConnect;
 
+//the stream failed to authenication.
+-(void)streamDidFailLogin;
+
 //got the room info
 -(void)didReceiveRooms:(NSArray*)rooms;
 
