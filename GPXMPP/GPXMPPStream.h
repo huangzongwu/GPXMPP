@@ -14,10 +14,18 @@
 
 @interface GPXMPPUser : NSObject
 
+typedef enum {
+    GPUserPresenceAvailable,
+    GPUserPresenceUnAvailable,
+    GPUserPresenceAway,
+    GPUserPresenceBusy
+} GPUserPresence;
+
 @property(nonatomic,copy)NSString* name;
 @property(nonatomic,copy)NSString* JID;
 @property(nonatomic,retain)NSData* image; //this is your image, I am doing this to work on the mac as well
-@property(nonatomic,copy)NSString* presence;
+@property(nonatomic,assign)GPUserPresence presence;
+@property(nonatomic,copy)NSString* status;
 @property(nonatomic,assign)BOOL isGroup;
 @property(nonatomic,retain)NSMutableArray* groupUsers;
 
@@ -26,8 +34,8 @@
 @end
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef enum {
-    GPUserVcard,
-    GPUserStatus
+    GPUserTypeVcard,
+    GPUserTypePresence
 } GPUserUpdateType;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 @protocol GPXMPPStreamDelegate <NSObject>
@@ -78,6 +86,9 @@ typedef enum {
 //this gets set by the stream.
 @property(nonatomic,copy)NSString* userJID; //the jid of the authenicated user
 
+//this gets set by the stream. It is the GPXMPPUser object for the user logged into the stream
+@property(nonatomic,retain)GPXMPPUser* streamUser;
+
 //normal delegate implementation
 @property(nonatomic,assign)id<GPXMPPStreamDelegate>delegate;
 
@@ -101,6 +112,9 @@ typedef enum {
 
 //fetch the roster.
 -(void)fetchRoster;
+
+//fetch Presence of user
+-(void)fetchPresence:(NSString*)jidString;
 
 //fetch the bookmarks
 -(void)fetchBookmarks;

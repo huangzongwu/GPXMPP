@@ -22,7 +22,7 @@ static GPXMPPStream* globalStream;
     return globalStream;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-@synthesize port,host,server,userName,password,userJID,XMPPUsers,XMPPRooms;
+@synthesize port,host,server,userName,password,userJID,XMPPUsers,XMPPRooms,streamUser;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(id)init
 {
@@ -122,7 +122,9 @@ static GPXMPPStream* globalStream;
         {
             [self resourceBind];
             [self performSelectorOnMainThread:@selector(didConnect) withObject:nil waitUntilDone:NO];
+            [self fetchVCard:self.userJID];
             [self fetchRoster];
+            [self fetchPresence:nil];
             [self readLoop];
         }
         
@@ -188,9 +190,10 @@ static GPXMPPStream* globalStream;
     //NSLog(@"resource response: %@",response);
     [socketConnection writeString:[NSString stringWithFormat:@"<iq type=\"set\"><bind xmlns=\"urn:ietf:params:xml:ns:xmpp-bind\"><resource>gpxmpp</resource></bind></iq>"]];
     XMLElement* bindElement = [self readElement];
-    //NSLog(@"bind response: %@",response);
+    //NSLog(@"bind response: %@",[bindElement convertToString]);
     XMLElement* jidElement = [bindElement findElement:@"jid"];
     self.userJID = [jidElement.text stripXMLTags];
+    self.streamUser = [[GPXMPPUser createUser:self.userJID name:nil] retain];
     NSLog(@"userJID is: %@",self.userJID);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -209,7 +212,8 @@ static GPXMPPStream* globalStream;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)fetchVCard:(NSString*)jidString
 {
-    [socketConnection writeString:[NSString stringWithFormat:@"<iq type=\"get\" to=\"%@\"><vCard xmlns=\"vcard-temp\"/></iq>",jidString]];
+    NSString* jid = [self cleanJID:jidString];
+    [socketConnection writeString:[NSString stringWithFormat:@"<iq type=\"get\" to=\"%@\"><vCard xmlns=\"vcard-temp\"/></iq>",jid]];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)sendMessage:(NSString*)message JID:(NSString*)jidString
@@ -219,6 +223,14 @@ static GPXMPPStream* globalStream;
     if(user)
         type = @"groupchat";
     [socketConnection writeString:[NSString stringWithFormat:@"<message to=\"%@\" from=\"%@\" type=\"%@\" xml:lang=\"en\"><body>%@</body></message>",jidString,self.userJID,type,message]];
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(void)fetchPresence:(NSString*)jidString
+{
+    if(!jidString)
+        [socketConnection writeString:@"<presence/>"];
+    else
+        [socketConnection writeString:[NSString stringWithFormat:@"<presence to=\"%@\" from=\"%@\" type='probe'></presence>",jidString,self.userJID]];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)fetchBookmarks
@@ -233,7 +245,7 @@ static GPXMPPStream* globalStream;
     while (true)
     {
         XMLElement* element = [self readElement];
-        if(element) //[element isValid])
+        if(element)
             [self processResponses:element];
         else
             [socketConnection writeString:@" " useQueue:NO];
@@ -245,7 +257,6 @@ static GPXMPPStream* globalStream;
 -(void)processResponses:(XMLElement*)element
 {
     //NSLog(@"process response: %@",[element convertToString]);
-    //XMLElement* element = [response XMLObjectFromString];
     if(element)
     {
         XMLElement* queryElement = [element findElement:@"query"];
@@ -257,6 +268,8 @@ static GPXMPPStream* globalStream;
             [self processRosterResponse:element];
         else if([element findElement:@"conference"])
             [self processConferenceResponse:element];
+        else if([element findElement:@"presence"])
+            [self processPresence:element];
         else
             [self performSelectorOnMainThread:@selector(elementDelegate:) withObject:element waitUntilDone:NO];
     }
@@ -276,6 +289,7 @@ static GPXMPPStream* globalStream;
             jid = [GPXMPPUser createUser:[rosterElement.attributes objectForKey:@"jid"] name:[rosterElement.attributes objectForKey:@"name"]];
             [self.XMPPUsers addObject:jid];
             [self fetchVCard:jid.JID];
+            [self fetchPresence:jid.JID];
         }
         else
         {
@@ -295,20 +309,34 @@ static GPXMPPStream* globalStream;
 -(void)processVCardResponse:(XMLElement*)element
 {
     NSString* jid = [element.attributes objectForKey:@"from"];
-    //NSLog(@"Vcard: %@",jid);
+    NSString* name = [element findElement:@"FN"].text;
+    NSRange range = [name rangeOfString:@"<"];
+    if(range.location != NSNotFound)
+        name = [name substringToIndex:range.location];
+    if(!jid)
+        jid = self.userJID;
     NSString* string = [[element findElement:@"BINVAL"].text stripXMLTags];
-    NSData *imageData = [string dataUsingEncoding:NSASCIIStringEncoding];
-    imageData = [GPXMPPStream base64Decoded:imageData];
+    NSData *imageData = nil;
+    if(string)
+    {
+        imageData = [string dataUsingEncoding:NSASCIIStringEncoding];
+        imageData = [GPXMPPStream base64Decoded:imageData];
+    }
     GPXMPPUser* user = [self userForJID:jid];
-    user.image = imageData;
     if(user)
-        [self performSelectorOnMainThread:@selector(vcardDelegate:) withObject:user waitUntilDone:NO];
+    {
+        user.image = imageData;
+        if(name)
+            user.name = name;
+        if(user)
+            [self performSelectorOnMainThread:@selector(vcardDelegate:) withObject:user waitUntilDone:NO];
+    }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)vcardDelegate:(GPXMPPUser*)user
 {
     if([self.delegate respondsToSelector:@selector(userDidUpdate:update:)])
-        [self.delegate userDidUpdate:user update:GPUserVcard];
+        [self.delegate userDidUpdate:user update:GPUserTypeVcard];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)processMessageResponse:(XMLElement*)element
@@ -336,17 +364,90 @@ static GPXMPPStream* globalStream;
         [self.delegate didReceiveMessage:message user:user];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(void)processPresence:(XMLElement*)element
+{
+    /*XMLElement* checkElement = [[NSString stringWithFormat:@"<check>%@</check>",[element convertToString]] XMLObjectFromString];
+    NSArray* items = [checkElement findElements:@"presence"];
+    if(items && items.count > 1)
+    {
+        //NSLog(@"room element: %@",[element convertToString]);
+        for(XMLElement* item in items)
+        {
+            //NSLog(@"room presence: %@",[item convertToString]);
+            [self processPresence:item];
+        }
+        return;
+    }*/
+    NSString* jid = [element.attributes objectForKey:@"from"];
+    if(jid)
+    {
+        GPXMPPUser* user = [self userForJID:jid];
+        if(user)
+        {
+            XMLElement* statusElement = [element findElement:@"status"];
+            NSString* status = [statusElement.text stripXMLTags];
+            if(status)
+                user.status = status;
+            NSString* type = [[[element.attributes objectForKey:@"type"] stripXMLTags] lowercaseString];
+            GPUserPresence presence = GPUserPresenceAvailable;
+            if([type isEqualToString:@"unavailable"])
+                presence = GPUserPresenceUnAvailable;
+            else if([type isEqualToString:@"available"])
+                presence = GPUserPresenceUnAvailable;
+            else if([type isEqualToString:@"busy"])
+                presence = GPUserPresenceBusy;
+            else if(![type isEqualToString:@"error"] && [type rangeOfString:@"subscribe"].location == NSNotFound)
+                presence = GPUserPresenceAway;
+            
+            XMLElement* showElement = [element findElement:@"show"];
+            NSString* showString = [[showElement.text stripXMLTags] lowercaseString];
+            if([showString isEqualToString:@"chat"])
+                presence = GPUserPresenceAvailable;
+            else if([showString isEqualToString:@"away"])
+                presence = GPUserPresenceAway;
+            else if([showString isEqualToString:@"xa"])
+                presence = GPUserPresenceAway;
+            else if([showString isEqualToString:@"dnd"])
+                presence = GPUserPresenceBusy;
+            user.presence = presence;
+            [self performSelectorOnMainThread:@selector(presenceDelegate:) withObject:user waitUntilDone:NO];
+        }
+        
+    }
+    //NSLog(@"presence: %@",[element convertToString]);
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(void)presenceDelegate:(GPXMPPUser*)user
+{
+    if([self.delegate respondsToSelector:@selector(userDidUpdate:update:)])
+        [self.delegate userDidUpdate:user update:GPUserTypePresence];
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)elementDelegate:(XMLElement*)element
 {
     if([self.delegate respondsToSelector:@selector(didReceiveElement:)])
         [self.delegate didReceiveElement:element];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(NSString*)cleanJID:(NSString*)jid
+{
+    NSString* checkJID = jid;
+    NSRange range = [checkJID rangeOfString:@"/" options:NSStringEnumerationReverse];
+    if(range.location != NSNotFound)
+        checkJID = [checkJID substringToIndex:range.location];
+    return checkJID;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(GPXMPPUser*)userForJID:(NSString*)jid
 {
+    NSString* checkJID = [self cleanJID:jid];
     for(GPXMPPUser* user in XMPPUsers)
-        if([user.JID isEqualToString:jid])
+        if([user.JID isEqualToString:checkJID])
             return user;
+    if([checkJID isEqualToString:self.userJID])
+        return self.streamUser;
+    if([jid isEqualToString:self.userJID])
+        return self.streamUser;
     return nil;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -506,7 +607,7 @@ static GPXMPPStream* globalStream;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 @implementation GPXMPPUser
 
-@synthesize name,JID,image,presence;
+@synthesize name,JID,image,presence,status;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 +(GPXMPPUser*)createUser:(NSString*)JID name:(NSString*)name
 {
