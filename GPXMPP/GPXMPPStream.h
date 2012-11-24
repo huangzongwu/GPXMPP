@@ -61,6 +61,9 @@ typedef enum {
 //got the room info
 -(void)didReceiveRooms:(NSArray*)rooms;
 
+//got the room users and room was joined
+-(void)didJoinRoom:(GPXMPPUser*)room;
+
 @end
 
 @interface GPXMPPStream : NSObject

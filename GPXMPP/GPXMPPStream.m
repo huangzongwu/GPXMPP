@@ -323,6 +323,8 @@ static GPXMPPStream* globalStream;
         imageData = [GPXMPPStream base64Decoded:imageData];
     }
     GPXMPPUser* user = [self userForJID:jid];
+    if(!user)
+        user = [self roomUserForJID:jid room:nil];
     if(user)
     {
         user.image = imageData;
@@ -382,6 +384,8 @@ static GPXMPPStream* globalStream;
     if(jid)
     {
         GPXMPPUser* user = [self userForJID:jid];
+        if(!user)
+            user = [self roomUserForJID:jid room:nil];
         if(user)
         {
             XMLElement* statusElement = [element findElement:@"status"];
@@ -412,6 +416,31 @@ static GPXMPPStream* globalStream;
             user.presence = presence;
             [self performSelectorOnMainThread:@selector(presenceDelegate:) withObject:user waitUntilDone:NO];
         }
+        GPXMPPUser* room = [self roomForJID:jid];
+        if(room)
+        {
+            XMLElement* checkElement = [[NSString stringWithFormat:@"<check>%@</check>",[element convertToString]] XMLObjectFromString];
+            NSArray* items = [checkElement findElements:@"item"];
+            for(XMLElement* itemElement in items)
+            {
+                NSString* itemJID = [itemElement.attributes objectForKey:@"jid"];
+                GPXMPPUser* itemUser = [self userForJID:itemJID];
+                if(!itemUser)
+                    itemUser = [self roomUserForJID:itemJID room:nil];
+                if(itemUser)
+                {
+                    if(![room.groupUsers containsObject:itemUser])
+                        [room.groupUsers addObject:itemUser];
+                }
+                else
+                {
+                    [room.groupUsers addObject:[GPXMPPUser createUser:itemJID name:nil]];
+                    [self fetchVCard:itemJID];
+                    [self fetchPresence:itemJID];
+                }
+            }
+            [self performSelectorOnMainThread:@selector(roomPresenceDelegate:) withObject:room waitUntilDone:NO];
+        }
         
     }
     //NSLog(@"presence: %@",[element convertToString]);
@@ -421,6 +450,12 @@ static GPXMPPStream* globalStream;
 {
     if([self.delegate respondsToSelector:@selector(userDidUpdate:update:)])
         [self.delegate userDidUpdate:user update:GPUserTypePresence];
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(void)roomPresenceDelegate:(GPXMPPUser*)room
+{
+    if([self.delegate respondsToSelector:@selector(didJoinRoom:)])
+        [self.delegate didJoinRoom:room];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)elementDelegate:(XMLElement*)element
@@ -448,14 +483,37 @@ static GPXMPPStream* globalStream;
         return self.streamUser;
     if([jid isEqualToString:self.userJID])
         return self.streamUser;
+    if([checkJID isEqualToString:[self cleanJID:self.userJID]])
+        return self.streamUser;
     return nil;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(GPXMPPUser*)roomForJID:(NSString*)jid
 {
+    NSString* checkJID = [self cleanJID:jid];
     for(GPXMPPUser* user in XMPPRooms)
-        if([user.JID isEqualToString:jid])
+        if([user.JID isEqualToString:checkJID] || [user.JID isEqualToString:jid])
             return user;
+    return nil;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(GPXMPPUser*)roomUserForJID:(NSString*)jid room:(GPXMPPUser*)room
+{
+    if(!room)
+    {
+        for(GPXMPPUser* checkRoom in XMPPRooms)
+        {
+            GPXMPPUser* foundRoom = [self roomUserForJID:jid room:checkRoom];
+            if(foundRoom)
+                return foundRoom;
+        }
+    }
+    NSString* checkJID = [self cleanJID:jid];
+    for(GPXMPPUser* user in room.groupUsers)
+    {
+        if([user.JID isEqualToString:checkJID] || [user.JID isEqualToString:jid])
+            return user;
+    }
     return nil;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -481,6 +539,7 @@ static GPXMPPStream* globalStream;
         XMPPRooms = [[NSMutableArray alloc] init];
     GPXMPPUser* user = [GPXMPPUser createUser:jid name:nickName];
     user.isGroup = YES;
+    user.groupUsers = [NSMutableArray array];
     [XMPPRooms addObject:user];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
