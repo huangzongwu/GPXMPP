@@ -9,6 +9,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #import "GPXMPPStream.h"
+#import "GPHTTPRequest.h"
 
 @implementation GPXMPPStream
 
@@ -21,29 +22,42 @@ static GPXMPPStream* globalStream;
         globalStream = [[GPXMPPStream alloc] init];
     return globalStream;
 }
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-@synthesize port,host,server,userName,password,userJID,XMPPUsers,XMPPRooms,streamUser;
+@synthesize port,host,server,userName,password,userJID,XMPPUsers,XMPPRooms,streamUser,boshURL,isConnected,timeout;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(id)init
 {
     if(self = [super init])
     {
         self.port = 5222;
+        self.timeout = 30;
     }
     return self;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)connect
 {
-    if(!socketConnection.isConnected)
-        [self performSelectorInBackground:@selector(startBackgroundStream) withObject:nil];
+    if(!self.isConnected)
+    {
+        if(self.boshURL)
+            [self boshConnect];
+        else
+        {
+            if(!socketConnection.isConnected)
+                [self performSelectorInBackground:@selector(startBackgroundStream) withObject:nil];
+        }
+    }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)writeElement:(XMLElement*)element
 {
     //NSString* data = [element convertToString];
     //NSLog(@"write to Stream: %@",data);
-    [socketConnection writeString:[element convertToString]];
+    if(boshSID)
+        [self sendBoshContent:[element convertToString]];
+    else
+        [socketConnection writeString:[element convertToString]];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(XMLElement*)readElement
@@ -120,6 +134,7 @@ static GPXMPPStream* globalStream;
         //NSLog(@"response 2:%@",response);
         if([self handleAuthenication:[features findElements:@"mechanism"]])
         {
+            self.isConnected = YES;
             [self resourceBind];
             [self performSelectorOnMainThread:@selector(didConnect) withObject:nil waitUntilDone:NO];
             [self fetchVCard:self.userJID];
@@ -140,8 +155,14 @@ static GPXMPPStream* globalStream;
 //write the main element string and get the response
 -(XMLElement*)mainElement
 {
-    [socketConnection writeString:[NSString stringWithFormat:@"<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0' to='%@'>",self.host]];
-    return [self readElement];//[socketConnection readString];
+    NSString* content = [NSString stringWithFormat:@"<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0' to='%@'>",self.host];
+    if(boshSID)
+        return [[self syncBoshRequest:content] XMLObjectFromString];
+    else
+    {
+        [socketConnection writeString:content];
+        return [self readElement];
+    }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //gets an array of supported authenication mechanisms. Can be subclassed to allow other auth types
@@ -161,25 +182,41 @@ static GPXMPPStream* globalStream;
 {
     NSString *payload = [NSString stringWithFormat:@"%C%@%C%@", 0, userName, 0, password];
     XMLElement* element = [XMLElement elementWithName:@"auth" attributes:[NSDictionary dictionaryWithObjectsAndKeys:@"PLAIN",@"mechanism",@"urn:ietf:params:xml:ns:xmpp-sasl",@"xmlns", nil]];
-    element.text = [GPXMPPStream base64forData:[payload dataUsingEncoding:NSUTF8StringEncoding]];;
-    [self writeElement:element];
-    //<auth mechanism="PLAIN" xmlns="urn:ietf:params:xml:ns:xmpp-sasl">AGRhbHRvbmlhbQBMU2dlbWVsb3Mx</auth>
-    //<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="PLAIN">AGRhbHRvbmlhbQBMU0dlbWVsb3Mx</auth>
-    //[socketConnection writeString:@"<auth xmlns=\"urn:ietf:params:xml:ns:xmpp-sasl\" mechanism=\"PLAIN\">AGRhbHRvbmlhbQBMU0dlbWVsb3Mx</auth>"];
-    XMLElement* responseElement = [self readElement];
-    while([responseElement.name isEqualToString:@"stream:features"])
+    element.text = [GPXMPPStream base64forData:[payload dataUsingEncoding:NSUTF8StringEncoding]];
+    XMLElement* responseElement = nil;
+    if(boshSID)
+    {
+        NSString* response = [self syncBoshRequest:[element convertToString]];
+        responseElement = [response XMLObjectFromString];
+    }
+    else
     {
         [self writeElement:element];
-        responseElement = [self readElement];
+        //<auth mechanism="PLAIN" xmlns="urn:ietf:params:xml:ns:xmpp-sasl">AGRhbHRvbmlhbQBMU2dlbWVsb3Mx</auth>
+        //<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="PLAIN">AGRhbHRvbmlhbQBMU0dlbWVsb3Mx</auth>
+        //[socketConnection writeString:@"<auth xmlns=\"urn:ietf:params:xml:ns:xmpp-sasl\" mechanism=\"PLAIN\">AGRhbHRvbmlhbQBMU0dlbWVsb3Mx</auth>"];
+        XMLElement* responseElement = [self readElement];
+        while([responseElement.name isEqualToString:@"stream:features"])
+        {
+            [self writeElement:element];
+            responseElement = [self readElement];
+        }
     }
     //NSLog(@"auth response:%@",[responseElement convertToString]);
-    if([responseElement.name isEqualToString:@"success"])
+    if([responseElement.name isEqualToString:@"success"] || [[responseElement convertToString] rangeOfString:@"success"].location != NSNotFound)
         return YES;
     return NO;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(BOOL)md5Auth
 {
+    /*XMLElement* element = [XMLElement elementWithName:@"auth" attributes:[NSDictionary dictionaryWithObjectsAndKeys:@"DIGEST-MD5",@"mechanism",@"urn:ietf:params:xml:ns:xmpp-sasl",@"xmlns", nil]];
+    XMLElement* responseElement = nil;
+    if(boshSID)
+    {
+        NSString* response = [self syncBoshRequest:[element convertToString]];
+        responseElement = [response XMLObjectFromString];
+    }*/
     //do MD5 authenication, just doing sasl for temp fix
     return [self saslAuth];
 }
@@ -188,13 +225,31 @@ static GPXMPPStream* globalStream;
 {
     [self mainElement];
     //NSLog(@"resource response: %@",response);
-    [socketConnection writeString:[NSString stringWithFormat:@"<iq type=\"set\"><bind xmlns=\"urn:ietf:params:xml:ns:xmpp-bind\"><resource>gpxmpp</resource></bind></iq>"]];
-    XMLElement* bindElement = [self readElement];
-    //NSLog(@"bind response: %@",[bindElement convertToString]);
+    NSString* content = [NSString stringWithFormat:@"<iq id='bind_1' type=\"set\"><bind xmlns=\"urn:ietf:params:xml:ns:xmpp-bind\"><resource>gpxmpp</resource></bind></iq>"];
+    XMLElement* bindElement = nil;
+    if(boshSID)
+    {
+        NSString* response = [self syncBoshRequest:content];
+        bindElement = [response XMLObjectFromString];
+    }
+    else
+    {
+        [socketConnection writeString:content];
+        bindElement = [self readElement];
+    }
     XMLElement* jidElement = [bindElement findElement:@"jid"];
     self.userJID = [jidElement.text stripXMLTags];
     self.streamUser = [[GPXMPPUser createUser:self.userJID name:nil] retain];
+    
     NSLog(@"userJID is: %@",self.userJID);
+    content = @"<iq type='set' id='session_1'><session xmlns='urn:ietf:params:xml:ns:xmpp-session'/></iq>";
+    if(boshSID)
+        [self syncBoshRequest:content];
+    else
+    {
+        [socketConnection writeString:content];
+        bindElement = [self readElement];
+    }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)didConnect
@@ -207,13 +262,21 @@ static GPXMPPStream* globalStream;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)fetchRoster
 {
-    [socketConnection writeString:@"<iq type=\"get\"><query xmlns=\"jabber:iq:roster\"/></iq>"];
+    NSString* content = [NSString stringWithFormat:@"<iq from='%@' type='get' id='roster_1'><query xmlns='jabber:iq:roster'/></iq>",self.userJID];//@"<iq type=\"get\"><query xmlns=\"jabber:iq:roster\"/></iq>";
+    if(boshSID)
+        [self sendBoshContent:content];
+    else
+        [socketConnection writeString:content];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)fetchVCard:(NSString*)jidString
 {
     NSString* jid = [self cleanJID:jidString];
-    [socketConnection writeString:[NSString stringWithFormat:@"<iq type=\"get\" to=\"%@\"><vCard xmlns=\"vcard-temp\"/></iq>",jid]];
+    NSString* content = [NSString stringWithFormat:@"<iq type=\"get\" to=\"%@\"><vCard xmlns=\"vcard-temp\"/></iq>",jid];
+    if(boshSID)
+        [self sendBoshContent:content];
+    else
+        [socketConnection writeString:content];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)sendMessage:(NSString*)message JID:(NSString*)jidString
@@ -222,20 +285,34 @@ static GPXMPPStream* globalStream;
     GPXMPPUser* user = [self roomForJID:jidString];
     if(user)
         type = @"groupchat";
-    [socketConnection writeString:[NSString stringWithFormat:@"<message to=\"%@\" from=\"%@\" type=\"%@\" xml:lang=\"en\"><body>%@</body></message>",jidString,self.userJID,type,message]];
+    
+    NSString* content = [NSString stringWithFormat:@"<message to=\"%@\" from=\"%@\" type=\"%@\" xml:lang=\"en\"><body>%@</body></message>",jidString,self.userJID,type,message];
+    if(boshSID)
+        [self sendBoshContent:content];
+    else
+        [socketConnection writeString:content];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)fetchPresence:(NSString*)jidString
 {
+    NSString* content = nil;
     if(!jidString)
-        [socketConnection writeString:@"<presence/>"];
+        content = @"<presence/>";
     else
-        [socketConnection writeString:[NSString stringWithFormat:@"<presence to=\"%@\" from=\"%@\" type='probe'></presence>",jidString,self.userJID]];
+        content = [NSString stringWithFormat:@"<presence to=\"%@\" from=\"%@\" type='probe'></presence>",jidString,self.userJID];
+    if(boshSID)
+        [self sendBoshContent:content];
+    else
+        [socketConnection writeString:content];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)fetchBookmarks
 {
-    [socketConnection writeString:[NSString stringWithFormat:@"<iq from='%@' type=\"get\"><query xmlns=\"jabber:iq:private\"><storage xmlns=\"storage:bookmarks\"></storage></query></iq>",self.userJID]];
+    NSString* content = [NSString stringWithFormat:@"<iq from='%@' type=\"get\"><query xmlns=\"jabber:iq:private\"><storage xmlns=\"storage:bookmarks\"></storage></query></iq>",self.userJID];
+    if(boshSID)
+        [self sendBoshContent:content];
+    else
+        [socketConnection writeString:content];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //process the responses of the writing/fetching above. This is done by checking the looping to check the stream for content
@@ -249,7 +326,6 @@ static GPXMPPStream* globalStream;
             [self processResponses:element];
         else
             [socketConnection writeString:@" " useQueue:NO];
-        
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -257,6 +333,16 @@ static GPXMPPStream* globalStream;
 -(void)processResponses:(XMLElement*)element
 {
     //NSLog(@"process response: %@",[element convertToString]);
+    if(boshSID)
+    {
+        XMLElement* body = [element findElement:@"body"];
+        if(body.childern.count > 0)
+            element = [element.childern objectAtIndex:0];
+        else if([body.text isEqualToString:@" "] || [body.text isEqualToString:@""])
+        {
+            element = nil;
+        }
+    }
     if(element)
     {
         XMLElement* queryElement = [element findElement:@"query"];
@@ -545,14 +631,122 @@ static GPXMPPStream* globalStream;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)joinRoom:(NSString*)jid
 {
-    [socketConnection writeString:[NSString stringWithFormat:@"<presence to='%@/gpxmpp'><x xmlns='http://jabber.org/protocol/muc'/></presence>",jid]];
+    NSString* content = [NSString stringWithFormat:@"<presence to='%@/gpxmpp'><x xmlns='http://jabber.org/protocol/muc'/></presence>",jid];
+    if(boshSID)
+        [self sendBoshContent:content];
+    else
+        [socketConnection writeString:content];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)leaveRoom:(NSString*)jid
 {
-    [socketConnection writeString:[NSString stringWithFormat:@"<presence type='unavailable' to='%@'/>",jid]];
+    NSString* content = [NSString stringWithFormat:@"<presence type='unavailable' to='%@'/>",jid];
+    if(boshSID)
+        [self sendBoshContent:content];
+    else
+        [socketConnection writeString:content];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//BOSH stuff
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//it is like a normal connection, but with Bosh.
+-(void)boshConnect
+{
+    if(!boshQueue)
+    {
+        boshQueue = [[NSOperationQueue alloc] init];
+        boshQueue.maxConcurrentOperationCount = 1;
+    }
+    boshRID = [self generateRid];
+    GPHTTPRequest* request = [[GPHTTPRequest alloc] initWithString:self.boshURL];
+    [request setRequestType:GPHTTPRequestRawPOST];
+    [request setCacheModel:GPHTTPIgnoreCache];
+    [request addRequestHeader:@"text/xml; charset=utf-8" key:@"Content-Type"];
+    [request setTimeout:self.timeout];
+    NSString* formatString = @"<body content='text/xml; charset=utf-8' from='%@' hold='1' rid='%d' to='%@' route='xmpp:%@:5281' ver='1.6' wait='60' ack='1' xml:lang='en' xmlns='http://jabber.org/protocol/httpbind'/>";
+    NSString* user = [NSString stringWithFormat:@"%@@%@",self.userName,self.host];
+    [request addPostValue:[NSString stringWithFormat:formatString,user,boshRID,self.host,self.server] key:@"key"];
+    [request startSync];
+    XMLElement* rootElement = [[request responseString] XMLObjectFromString];
+    boshSID = [rootElement.attributes objectForKey:@"sid"];
+    //NSLog(@"boshSID: %@",boshSID);
+    boshRID++;
+    XMLElement* features = [rootElement findElement:@"stream:features"];
+    [request release];
+    
+    if([self handleAuthenication:[features findElements:@"mechanism"]])
+    {
+        self.isConnected = YES;
+        [self resourceBind];
+        [self performSelectorOnMainThread:@selector(didConnect) withObject:nil waitUntilDone:NO];
+        [self fetchRoster];
+        [self fetchVCard:self.userJID];
+        [self fetchPresence:nil];
+        [self performSelectorOnMainThread:@selector(sendBoshContent:) withObject:@" " waitUntilDone:NO];
+    }
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(void)boshLoop
+{
+    while(isConnected)
+    {
+        XMLElement* element = [[self syncBoshRequest:@" "] XMLObjectFromString];
+        if(element)
+            [self processResponses:element];
+    }
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(void)sendBoshContent:(NSString*)content
+{
+    NSLog(@"op count: %d",boshQueue.operationCount);
+    NSLog(@"send contnet: [%@]",content);
+    GPHTTPRequest* request = [GPHTTPRequest requestWithString:self.boshURL];
+    [request setRequestType:GPHTTPRequestRawPOST];
+    [request setCacheModel:GPHTTPIgnoreCache];
+    [request setDelegate:(id<GPHTTPRequestDelegate>)self];
+    [request addRequestHeader:@"text/xml; charset=utf-8" key:@"Content-Type"];
+    [request setTimeout:2];
+    NSString* value = [NSString stringWithFormat:@"<body rid='%d' sid='%@' xmlns='http://jabber.org/protocol/httpbind'>%@</body>",boshRID,boshSID,content];
+    [request addPostValue:value key:@"key"];
+    [boshQueue addOperation:request];
+    boshRID++;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(void)requestFinished:(GPHTTPRequest*)request
+{
+    //NSLog(@"request finished: %@ postValue: %@",[request responseString],[request postValues]);
+    XMLElement* element = [[request responseString] XMLObjectFromString];
+    [self processResponses:element];
+    if(element.childern.count == 0)
+        [self performSelector:@selector(sendBoshContent:) withObject:@" " afterDelay:4];
+     //NSLog(@"op count: %d",boshQueue.operationCount);
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(void)requestFailed:(GPHTTPRequest*)request
+{
+    NSLog(@"request failed: %@",[request.error userInfo]);
+    NSLog(@"op count: %d",boshQueue.operationCount);
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(NSString*)syncBoshRequest:(NSString*)content
+{
+    GPHTTPRequest* request = [GPHTTPRequest requestWithString:self.boshURL];
+    [request setRequestType:GPHTTPRequestRawPOST];
+    [request setCacheModel:GPHTTPIgnoreCache];
+    [request addRequestHeader:@"text/xml; charset=utf-8" key:@"Content-Type"];
+    [request addRequestHeader:self.host key:@"Host"];
+    [request setTimeout:self.timeout];
+    NSString* value = [NSString stringWithFormat:@"<body rid='%d' sid='%@' xmlns='http://jabber.org/protocol/httpbind'>%@</body>",boshRID,boshSID,content];
+    [request addPostValue:value key:@"key"];
+    [request startSync];
+    boshRID++;
+    return [request responseString];
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+- (long long)generateRid
+{
+    return (arc4random() % 1000000000LL + 1000000001LL);
+}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //helper stuff
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -655,6 +849,7 @@ static GPXMPPStream* globalStream;
     [XMPPUsers release];
     [XMPPRooms release];
     [socketConnection release];
+    [boshQueue release];
     [super dealloc];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -4,3 +4,6 @@
 [submodule "GPSocket"]
 	path = GPSocket
 	url = https://github.com/daltoniam/GPSocket.git
+[submodule "GPHTTPRequest"]
+	path = GPHTTPRequest
+	url = git://github.com/daltoniam/GPHTTPRequest.git

@@ -69,6 +69,9 @@ typedef enum {
 @interface GPXMPPStream : NSObject
 {
     GPSocket* socketConnection;
+    NSString* boshSID;
+    int boshRID;
+    NSOperationQueue* boshQueue;
 }
 
 //set your port. Defalut is 5222.
@@ -100,6 +103,14 @@ typedef enum {
 
 //is an array of XMPPUsers from your rooms.
 @property(nonatomic,retain)NSMutableArray* XMPPRooms;
+
+//set this if you are going to use boshURL
+@property(nonatomic,retain)NSString* boshURL;
+
+//set this if you want a custom timeout. Default is 30
+@property(nonatomic,assign)int timeout;
+
+@property(nonatomic,assign)BOOL isConnected;
 
 //shared stream instance.
 +(GPXMPPStream*)sharedStream;
