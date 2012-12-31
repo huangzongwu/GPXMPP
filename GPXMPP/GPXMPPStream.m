@@ -311,7 +311,7 @@ static GPXMPPStream* globalStream;
     if(!jidString)
         content = @"<presence/>";
     else
-        content = [NSString stringWithFormat:@"<presence to=\"%@\" from=\"%@\" type='probe'></presence>",jidString,self.userJID];
+        content = [NSString stringWithFormat:@"<presence to=\"%@\" from=\"%@\" type='probe'></presence>",jidString,self.userJID]; //subscribe, I might need to use this
     if(boshSID)
         [self sendBoshContent:content];
     else
