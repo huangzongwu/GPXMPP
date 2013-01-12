@@ -41,7 +41,7 @@ static GPXMPPStream* globalStream;
     if(!self.isConnected)
     {
         if(self.boshURL)
-            [self boshConnect];
+            [self performSelectorInBackground:@selector(boshConnect) withObject:nil];
         else
         {
             if(!socketConnection.isConnected)
@@ -490,7 +490,13 @@ static GPXMPPStream* globalStream;
                 presence = GPUserPresenceAway;
             
             XMLElement* showElement = [element findElement:@"show"];
-            NSString* showString = [[showElement.text stripXMLTags] lowercaseString];
+            //NSString* statusString = [[showElement findElement:@"status"].text stripXMLTags];
+            //NSLog(@"statusString: %@",statusString);
+            NSString* showString = showElement.text;
+            NSRange range = [showString rangeOfString:@"<"];
+            if(range.location != NSNotFound)
+                showString = [showString substringToIndex:range.location];
+            showString = [[showString stripXMLTags] lowercaseString];
             if([showString isEqualToString:@"chat"])
                 presence = GPUserPresenceAvailable;
             else if([showString isEqualToString:@"away"])
