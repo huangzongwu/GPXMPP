@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C2C9D9716ABA12E00F1AAC7 /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2C9D9616ABA12E00F1AAC7 /* GTMNSString+HTML.m */; };
 		5C61E893160516C8008AE2CD /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6D7D3315FBE37B0017A947 /* libxml2.2.dylib */; };
 		5C6D7C9115F6DFB90017A947 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6D7C9015F6DFB90017A947 /* Foundation.framework */; };
 		5C6D7C9615F6DFB90017A947 /* GPXMPP.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5C6D7C9515F6DFB90017A947 /* GPXMPP.h */; };
@@ -76,6 +77,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5C2C9D9516ABA12E00F1AAC7 /* GTMNSString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSString+HTML.h"; sourceTree = "<group>"; };
+		5C2C9D9616ABA12E00F1AAC7 /* GTMNSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSString+HTML.m"; sourceTree = "<group>"; };
 		5C6D7C8D15F6DFB90017A947 /* libGPXMPP.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGPXMPP.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C6D7C9015F6DFB90017A947 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5C6D7C9415F6DFB90017A947 /* GPXMPP-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GPXMPP-Prefix.pch"; sourceTree = "<group>"; };
@@ -385,6 +388,8 @@
 			children = (
 				5CF87B1A1633306500A92D3A /* XMLKit.h */,
 				5CF87B1B1633306500A92D3A /* XMLKit.m */,
+				5C2C9D9516ABA12E00F1AAC7 /* GTMNSString+HTML.h */,
+				5C2C9D9616ABA12E00F1AAC7 /* GTMNSString+HTML.m */,
 			);
 			path = XMLKit;
 			sourceTree = SOURCE_ROOT;
@@ -528,6 +533,7 @@
 				5CF87B1C1633306500A92D3A /* GPSocket.m in Sources */,
 				5CF87B1D1633306500A92D3A /* KQueue.m in Sources */,
 				5CF87B201633306600A92D3A /* XMLKit.m in Sources */,
+				5C2C9D9716ABA12E00F1AAC7 /* GTMNSString+HTML.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

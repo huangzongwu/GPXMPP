@@ -298,7 +298,9 @@ static GPXMPPStream* globalStream;
     if(user)
         type = @"groupchat";
     
-    NSString* content = [NSString stringWithFormat:@"<message to=\"%@\" from=\"%@\" type=\"%@\" xml:lang=\"en\"><body>%@</body></message>",jidString,self.userJID,type,message];
+    NSString* text = [message xmlSafe];
+    //NSLog(@"safe string: %@",text);
+    NSString* content = [NSString stringWithFormat:@"<message to=\"%@\" from=\"%@\" type=\"%@\" xml:lang=\"en\"><body>%@</body></message>",jidString,self.userJID,type,text];
     if(boshSID)
         [self sendBoshContent:content];
     else
