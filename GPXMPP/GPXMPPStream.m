@@ -235,8 +235,9 @@ static GPXMPPStream* globalStream;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)resourceBind
 {
-    XMLElement* response = [self mainElement];
-    NSLog(@"resource response: %@",[response convertToString]);
+    [self mainElement];
+    //XMLElement* response = 
+    //NSLog(@"resource response: %@",[response convertToString]);
     NSString* content = [NSString stringWithFormat:@"<iq id='bind_1' type=\"set\"><bind xmlns=\"urn:ietf:params:xml:ns:xmpp-bind\"><resource>gpxmpp</resource></bind></iq>"];
     XMLElement* bindElement = nil;
     if(boshSID)
@@ -398,6 +399,20 @@ static GPXMPPStream* globalStream;
         }
     }
     [self performSelectorOnMainThread:@selector(rosterDelegate:) withObject:self.XMPPUsers waitUntilDone:NO];
+    [self performSelector:@selector(refetchPresence) withObject:nil afterDelay:1];
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(void)refetchPresence
+{
+    for(GPXMPPUser* user in self.XMPPUsers)
+        [self fetchPresence:user.JID];
+    [self performSelectorOnMainThread:@selector(refetchPresenceDelegate) withObject:nil waitUntilDone:NO];
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(void)refetchPresenceDelegate
+{
+    if([self.delegate respondsToSelector:@selector(didReloadPresence)])
+        [self.delegate didReloadPresence];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)rosterDelegate:(NSArray*)users
@@ -469,6 +484,7 @@ static GPXMPPStream* globalStream;
 -(void)processPresence:(XMLElement*)element
 {
     NSString* jid = [element.attributes objectForKey:@"from"];
+    //NSLog(@"presence jid: %@\n\n",jid);
     if(jid)
     {
         GPXMPPUser* user = [self userForJID:jid];
@@ -663,7 +679,7 @@ static GPXMPPStream* globalStream;
     if(!boshQueue)
     {
         boshQueue = [[NSOperationQueue alloc] init];
-        boshQueue.maxConcurrentOperationCount = 1;
+        boshQueue.maxConcurrentOperationCount = 2;
     }
     boshRID = [self generateRid];
     GPHTTPRequest* request = [[GPHTTPRequest alloc] initWithString:self.boshURL];
@@ -686,6 +702,11 @@ static GPXMPPStream* globalStream;
     boshSID = [rootElement.attributes objectForKey:@"sid"];
     //NSLog(@"boshSID: %@",boshSID);
     boshRID++;
+    self.timeout = 5;
+    if([rootElement.attributes objectForKey:@"polling"])
+        self.timeout = [[rootElement.attributes objectForKey:@"polling"] intValue];
+    if([rootElement.attributes objectForKey:@"requests"])
+         boshQueue.maxConcurrentOperationCount = [[rootElement.attributes objectForKey:@"requests"] intValue];
     XMLElement* features = [rootElement findElement:@"stream:features"];
     [request release];
     NSArray* mechs = [features findElements:@"mechanism"];
@@ -724,7 +745,7 @@ static GPXMPPStream* globalStream;
     [request setCacheModel:GPHTTPIgnoreCache];
     [request setDelegate:(id<GPHTTPRequestDelegate>)self];
     [request addRequestHeader:@"text/xml; charset=utf-8" key:@"Content-Type"];
-    [request setTimeout:2];
+    [request setTimeout:self.timeout];
     NSString* value = [NSString stringWithFormat:@"<body rid='%d' sid='%@' xmlns='http://jabber.org/protocol/httpbind'>%@</body>",boshRID,boshSID,content];
     [request addPostValue:value key:@"key"];
     [boshQueue addOperation:request];
@@ -744,7 +765,7 @@ static GPXMPPStream* globalStream;
     if(boshQueue.operationCount == 0)
         [self resendLoop];
     else
-        [self performSelector:@selector(sendBoshContent:) withObject:@" " afterDelay:self.timeout/2];
+        [self performSelector:@selector(sendBoshContent:) withObject:@" " afterDelay:2];
     //NSLog(@"request failed: %@",[request.error userInfo]);
     //NSLog(@"op count: %d",boshQueue.operationCount);
 }

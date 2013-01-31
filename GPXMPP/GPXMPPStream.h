@@ -64,6 +64,10 @@ typedef enum {
 //got the room users and room was joined
 -(void)didJoinRoom:(GPXMPPUser*)room;
 
+@optional
+//precense got updated after roster
+-(void)didReloadPresence;
+
 @end
 
 @interface GPXMPPStream : NSObject
