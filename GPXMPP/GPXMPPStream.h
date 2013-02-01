@@ -37,6 +37,11 @@ typedef enum {
     GPUserTypeVcard,
     GPUserTypePresence
 } GPUserUpdateType;
+
+typedef enum {
+    GPTypingActive,
+    GPTypingComposing
+} GPTypingState;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 @protocol GPXMPPStreamDelegate <NSObject>
 
@@ -51,6 +56,12 @@ typedef enum {
 
 //you got a message from a user.
 -(void)didReceiveGroupMessage:(NSString*)message room:(GPXMPPUser*)room user:(GPXMPPUser*)user;
+
+//you got a composing state from a user.
+-(void)didReceiveComposingState:(GPTypingState)state user:(GPXMPPUser*)user;
+
+//you got a composing state from a user.
+-(void)didReceiveGroupComposingState:(GPTypingState)state room:(GPXMPPUser*)room user:(GPXMPPUser*)user;
 
 //default fall through for any kind of message that does not match other delegates
 -(void)didReceiveElement:(XMLElement*)element;
@@ -130,6 +141,9 @@ typedef enum {
 
 //send a message to a user
 -(void)sendMessage:(NSString*)message JID:(NSString*)jidString;
+
+//send a typing state to the other user
+-(void)sendTypingState:(GPTypingState)state JID:(NSString*)jidString;
 
 //fetch the roster.
 -(void)fetchRoster;

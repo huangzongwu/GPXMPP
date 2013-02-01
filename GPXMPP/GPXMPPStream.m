@@ -308,6 +308,24 @@ static GPXMPPStream* globalStream;
         [socketConnection writeString:content];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(void)sendTypingState:(GPTypingState)state JID:(NSString*)jidString
+{
+    NSString* type = @"chat";
+    GPXMPPUser* user = [self roomForJID:jidString];
+    if(user)
+        type = @"groupchat";
+    NSString* text = nil;
+    if(state == GPTypingComposing)
+        text = [NSString stringWithFormat:@"<composing></composing>"];
+    else
+        text = [NSString stringWithFormat:@"<active></active>"];
+    NSString* content = [NSString stringWithFormat:@"<message to=\"%@\" from=\"%@\" type=\"%@\" xml:lang=\"en\">%@</message>",jidString,self.userJID,type,text];
+    if(boshSID)
+        [self sendBoshContent:content];
+    else
+        [socketConnection writeString:content];
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)fetchPresence:(NSString*)jidString
 {
     NSString* content = nil;
@@ -478,6 +496,24 @@ static GPXMPPStream* globalStream;
         if([[self cleanJID:realUser.JID] isEqualToString:[self cleanJID:self.userJID]] || !realUser)
             return;
     }
+    if(!body)
+    {
+        GPTypingState state = GPTypingActive;
+        XMLElement* compose = [element findElement:@"composing"];
+        if(compose)
+            state = GPTypingComposing;
+        //compose = [element findElement:@"active"];
+        //if(compose)
+        //    NSLog(@"active!");
+        NSDictionary* dict = nil;
+        if(realUser)
+            dict = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:state],@"state",user,@"user",realUser,@"realUser", nil];
+        else
+            dict = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:state],@"state",user,@"user", nil];
+        [self performSelectorOnMainThread:@selector(composingDelegate:) withObject:dict waitUntilDone:NO];
+        return;
+        
+    }
     if(body && ![jidUser isEqualToString:self.userJID])
     {
         NSDictionary* dict = nil;
@@ -501,6 +537,20 @@ static GPXMPPStream* globalStream;
     }
     else if([self.delegate respondsToSelector:@selector(didReceiveMessage:user:)])
         [self.delegate didReceiveMessage:message user:user];
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-(void)composingDelegate:(NSDictionary*)dict
+{
+    NSNumber* state = [dict objectForKey:@"state"];
+    GPXMPPUser* user = [dict objectForKey:@"user"];
+    GPXMPPUser* realUser = [dict objectForKey:@"realUser"];
+    if(realUser)
+    {
+        if([self.delegate respondsToSelector:@selector(didReceiveGroupComposingState:room:user:)])
+            [self.delegate didReceiveGroupComposingState:[state intValue] room:user user:realUser];
+    }
+    else if([self.delegate respondsToSelector:@selector(didReceiveComposingState:user:)])
+        [self.delegate didReceiveComposingState:[state intValue] user:user];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -(void)processPresence:(XMLElement*)element
