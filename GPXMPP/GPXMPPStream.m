@@ -459,16 +459,32 @@ static GPXMPPStream* globalStream;
 -(void)processMessageResponse:(XMLElement*)element
 {
     //NSLog(@"got a message response: %@",[element convertToString]);
+    NSString* type = [element.attributes objectForKey:@"type"];
     XMLElement* body = [element findElement:@"body"];
     NSString* jidUser = [element.attributes objectForKey:@"from"];
     NSString* bareJID = jidUser;
     NSRange range = [bareJID rangeOfString:@"/"];
+    GPXMPPUser* realUser = nil;
     if(range.location != NSNotFound)
         bareJID = [bareJID substringToIndex:range.location];
-    GPXMPPUser* user = [self userForJID:jidUser];
+    GPXMPPUser* user = [self userForJID:bareJID];
+    if(!user)
+        user = [self roomForJID:bareJID];
+    if(range.location != NSNotFound && [type isEqualToString:@"groupchat"])
+    {
+        NSString* name = [jidUser substringFromIndex:range.location+1];
+        name = [NSString stringWithFormat:@"%@@%@",name,host];
+        realUser = [self roomUserForJID:name room:user];
+        if([[self cleanJID:realUser.JID] isEqualToString:[self cleanJID:self.userJID]] || !realUser)
+            return;
+    }
     if(body && ![jidUser isEqualToString:self.userJID])
     {
-        NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:[body.text stripXMLTags],@"message",user,@"user", nil];
+        NSDictionary* dict = nil;
+        if(realUser)
+            dict = [NSDictionary dictionaryWithObjectsAndKeys:[body.text stripXMLTags],@"message",user,@"user",realUser,@"realUser", nil];
+        else
+            dict = [NSDictionary dictionaryWithObjectsAndKeys:[body.text stripXMLTags],@"message",user,@"user", nil];
         [self performSelectorOnMainThread:@selector(messageDelegate:) withObject:dict waitUntilDone:NO];
     }
 }
@@ -477,7 +493,13 @@ static GPXMPPStream* globalStream;
 {
     NSString* message = [dict objectForKey:@"message"];
     GPXMPPUser* user = [dict objectForKey:@"user"];
-    if([self.delegate respondsToSelector:@selector(didReceiveMessage:user:)])
+    GPXMPPUser* realUser = [dict objectForKey:@"realUser"];
+    if(realUser)
+    {
+        if([self.delegate respondsToSelector:@selector(didReceiveGroupMessage:room:user:)])
+            [self.delegate didReceiveGroupMessage:message room:user user:realUser];
+    }
+    else if([self.delegate respondsToSelector:@selector(didReceiveMessage:user:)])
         [self.delegate didReceiveMessage:message user:user];
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -621,7 +643,7 @@ static GPXMPPStream* globalStream;
     NSString* checkJID = [self cleanJID:jid];
     for(GPXMPPUser* user in room.groupUsers)
     {
-        if([user.JID isEqualToString:checkJID] || [user.JID isEqualToString:jid])
+        if([user.JID isEqualToString:checkJID] || [user.JID isEqualToString:jid] || [[self cleanJID:user.JID] isEqualToString:checkJID])
             return user;
     }
     return nil;

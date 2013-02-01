@@ -49,6 +49,9 @@ typedef enum {
 //you got a message from a user.
 -(void)didReceiveMessage:(NSString*)message user:(GPXMPPUser*)user;
 
+//you got a message from a user.
+-(void)didReceiveGroupMessage:(NSString*)message room:(GPXMPPUser*)room user:(GPXMPPUser*)user;
+
 //default fall through for any kind of message that does not match other delegates
 -(void)didReceiveElement:(XMLElement*)element;
 
