@@ -143,6 +143,12 @@ typedef enum {
 //get a userObject from the jid
 -(GPXMPPUser*)userForJID:(NSString*)jid;
 
+//get a userObject from the jid
+-(GPXMPPUser*)roomForJID:(NSString*)jid;
+
+//get a userObject from the jid
+-(GPXMPPUser*)roomUserForJID:(NSString*)jid room:(GPXMPPUser*)room;
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //group/room chat. XEP-0045
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -155,8 +161,5 @@ typedef enum {
 
 //leave room
 -(void)leaveRoom:(NSString*)jid;
-
-//get a userObject from the jid
--(GPXMPPUser*)roomForJID:(NSString*)jid;
 
 @end
